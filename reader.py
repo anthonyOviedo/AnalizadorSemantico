@@ -1,13 +1,16 @@
 # Antony Oviedo Alfaro
 # November 1,2019
 
+table_of_symbols = {}
+
 
 def buiderTable(contentTokens):
     # buscar asignaciones, el elemento '='
     for line in contentTokens:
-        for token in line:
+        for idx, token in enumerate(line):
             if token is '=':
                 # armar la tabla aqui...
+                table_of_symbols.update()
 
 
 def readTxt(text):
