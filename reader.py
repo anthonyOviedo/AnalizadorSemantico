@@ -4,13 +4,24 @@
 table_of_symbols = {}
 
 
+class Var:
+    def __init__(self, nombre, val):
+        self.nombre = nombre
+        self.val = val
+
+
 def buiderTable(contentTokens):
     # buscar asignaciones, el elemento '='
+    table_of_symbols = {}
     for line in contentTokens:
         for idx, token in enumerate(line):
+            # en busca de variables.
             if token is '=':
                 # armar la tabla aqui...
-                table_of_symbols.update()
+                un_var = Var(line[idx - 1], line[idx + 1])
+                table_of_symbols.update({un_var.nombre: un_var.val})
+
+    return table_of_symbols
 
 
 def readTxt(text):
@@ -46,9 +57,3 @@ def spliter(file_):
 
 
 initScan()
-
-
-class var:
-    def __init__(self, nombre, val):
-        self.nombre = nombre
-        self.val = val
