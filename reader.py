@@ -2,26 +2,26 @@
 # November 1,2019
 # test 2
 
-table_of_symbols = {}
-
 
 class Var:
-    def __init__(self, _type, name, val=None):
+    def __init__(self, _type, name, line, val=None):
         self.name = name
         self.type = _type
         self.val = val
+        self.line = line
 
 
 class Function:
-    def __init__(self, name, retorn_val):
+    def __init__(self, name, retorn_val, line):
         self.name = name
         self.retorn_val = retorn_val
+        self.line = line
 
 
 def builderTable(contentTokens):
     # buscar asignaciones, el elemento '='
     table_of_symbols = {}
-    for line in contentTokens:
+    for ln, line in enumerate(contentTokens, 1):
         for idx, token in enumerate(line):
 
             # se econtro una declaracion.
@@ -29,18 +29,19 @@ def builderTable(contentTokens):
 
                 # preguntar si tiene () para que sea una funcion.
                 if '(' in line and ')' in line:
-                    una_funcion = Function(line[idx + 1], token)
+                    una_funcion = Function(line[idx + 1], token, ln)
                     table_of_symbols.update({una_funcion.name: una_funcion})
 
                 # variable y asignacion
                 elif '=' in line:
-                    un_var = Var(line[idx], line[idx + 1], line[idx + 3])
+                    un_var = Var(line[idx], line[idx + 1], ln, line[idx + 3])
                     table_of_symbols.update({un_var.name: un_var})
                     break
 
                 # declaracion solamante
                 else:
-                    un_var = Var(line[idx], line[idx + 1])
+                    un_var = Var(line[idx], line[idx + 1], ln)
+                    table_of_symbols.update({un_var.name: un_var})
                     break
 
     return table_of_symbols
@@ -90,11 +91,11 @@ def spliter(file_):
 def initScan():
     file_ = readTxt("test.txt")
     lines = spliter(file_)
-    contetTokens = tokenizer(lines)
-    return builderTable(contetTokens)
+    contTokens = tokenizer(lines)
+    return builderTable(contTokens)
 
 
-def checkCode():
+def checkCode(table_of_simbols):
     pass
     # En esta funcion busco los errores del codigo
 
@@ -103,5 +104,5 @@ def isType(token):
     return token == 'int' or token == 'string' or token == 'void' or token == 'float'
 
 
-initScan()
-checkCode()
+table_of_simbols = initScan()
+Result = checkCode(table_of_simbols)
