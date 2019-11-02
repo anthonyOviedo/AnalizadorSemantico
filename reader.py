@@ -29,8 +29,8 @@ def builderTable(contentTokens):
 
                 # preguntar si tiene () para que sea una funcion.
                 if '(' in line and ')' in line:
-                    # es una funcion.
-                    pass
+                    una_funcion = Function(line[idx + 1], token)
+                    table_of_symbols.update({una_funcion.name: una_funcion})
 
                 # variable y asignacion
                 elif '=' in line:
