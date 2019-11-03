@@ -2,25 +2,47 @@
 # November 1,2019
 # test 2
 
-table_of_symbols = {}
-
 
 class Var:
-    def __init__(self, nombre, val):
-        self.nombre = nombre
+    def __init__(self, _type, name, line, val=None):
+        self.name = name
+        self.type = _type
         self.val = val
+        self.line = line
 
 
-def buiderTable(contentTokens):
+class Function:
+    def __init__(self, name, retorn_val, line):
+        self.name = name
+        self.retorn_val = retorn_val
+        self.line = line
+
+
+def builderTable(contentTokens):
     # buscar asignaciones, el elemento '='
     table_of_symbols = {}
-    for line in contentTokens:
+    for ln, line in enumerate(contentTokens, 1):
         for idx, token in enumerate(line):
-            # en busca de variables.
-            if token is '=':
-                # armar la tabla aqui...
-                un_var = Var(line[idx - 1], line[idx + 1])
-                table_of_symbols.update({un_var.nombre: un_var.val})
+
+            # se econtro una declaracion.
+            if isType(token):
+
+                # preguntar si tiene () para que sea una funcion.
+                if '(' in line and ')' in line:
+                    una_funcion = Function(line[idx + 1], token, ln)
+                    table_of_symbols.update({una_funcion.name: una_funcion})
+
+                # variable y asignacion
+                elif '=' in line:
+                    un_var = Var(line[idx], line[idx + 1], ln, line[idx + 3])
+                    table_of_symbols.update({un_var.name: un_var})
+                    break
+
+                # declaracion solamante
+                else:
+                    un_var = Var(line[idx], line[idx + 1], ln)
+                    table_of_symbols.update({un_var.name: un_var})
+                    break
 
     return table_of_symbols
 
@@ -31,25 +53,34 @@ def readTxt(text):
     return fle
 
 
-def initScan():
-    file_ = readTxt("test.txt")
-    lines = spliter(file_)
-    contetTokens = tokenizer(lines)
-    buiderTable(contetTokens)
-
-
 def tokenizer(lines):
     tokenContent = []
+    # meter  " " para separar simbolos () {} ;
+    for idx, line in enumerate(lines):
+        if line.find("(") > -1 or line.find(")") > -1:
+            # obtener el elemento y insertar dos " "(" " para separar el texto
+            line = line.replace("(", " ( ")
+            line = line.replace(")", " ) ")
+            lines[idx] = line
+
+        if line.find("{") > -1 or line.find("}") > -1:
+            # obtener el elemento y insertar dos " "(" " para separar el texto
+            line = line.replace("{", " { ")
+            line = line.replace("}", " } ")
+            lines[idx] = line
+
+        if line.find(";") > -1:
+            # obtener el elemento y insertar dos " "(" " para separar el texto
+            line = line.replace(";", " ; ")
+            lines[idx] = line
+
+    # tokenizar
     for line in lines:
         tokenContent.append(line.split())
     return tokenContent
 
 
 def spliter(file_):
-    # guardar las instrucciones aqui
-    # linea por linea y bloques de codigo {...}
-    # donde termina con comas es una instruccion.
-    # el inicio de {} implica recuperar xxxx antes.
     lines = []
     for x in file_.readlines():
         lines.append(x)
@@ -57,4 +88,21 @@ def spliter(file_):
     return lines
 
 
-initScan()
+def initScan():
+    file_ = readTxt("test.txt")
+    lines = spliter(file_)
+    contTokens = tokenizer(lines)
+    return builderTable(contTokens)
+
+
+def checkCode(table_of_simbols):
+    pass
+    # En esta funcion busco los errores del codigo
+
+
+def isType(token):
+    return token == 'int' or token == 'string' or token == 'void' or token == 'float'
+
+
+table_of_simbols = initScan()
+Result = checkCode(table_of_simbols)
