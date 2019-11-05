@@ -33,11 +33,15 @@ def builderTable(contentTokens):
                     table_of_symbols.update({una_funcion.name: una_funcion})
 
                 # variable y asignacion
+                elif '=' in line and 'auto' in line:
+                    typ = typeOf(line[idx + 3])
+                    un_var = Var(typ, line[idx + 1], ln, line[idx + 3])
+                    table_of_symbols.update({un_var.name: un_var})
+                    break
                 elif '=' in line:
                     un_var = Var(line[idx], line[idx + 1], ln, line[idx + 3])
                     table_of_symbols.update({un_var.name: un_var})
                     break
-
                 # declaracion solamante
                 else:
                     un_var = Var(line[idx], line[idx + 1], ln)
@@ -74,6 +78,11 @@ def tokenizer(lines):
             line = line.replace(";", " ; ")
             lines[idx] = line
 
+        if line.find("=") > -1:
+            # obtener el elemento y insertar dos " "(" " para separar el texto
+            line = line.replace(";", " ; ")
+            lines[idx] = line
+
     # tokenizar
     for line in lines:
         tokenContent.append(line.split())
@@ -101,7 +110,19 @@ def checkCode(table_of_simbols):
 
 
 def isType(token):
-    return token == 'int' or token == 'string' or token == 'void' or token == 'float'
+    return token == 'int' or token == 'string' or token == 'void' or token == 'float' or token == 'auto'
+
+
+def typeOf(val):
+    try:
+        int(val)
+        return 'int'
+    except ValueError:
+        pass
+    if val[0] == '"' and val[len(val) - 1] == '"':
+        return 'string'
+    elif val == "true" or val == "false":
+        return "bool"
 
 
 table_of_simbols = initScan()
