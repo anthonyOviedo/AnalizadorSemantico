@@ -18,9 +18,29 @@ class Function:
         self.line = line
 
 
-def builderTable(contentTokens):
+def initScan(text=None):
+    # guarda las lineas en un array lines
+    if text is not None:
+        file_ = readTxt(text)
+    else:
+        file_ = readTxt("test.txt")
+    lines = spliter(file_)
+
+    # tokeniza
+    contTokens = tokenizer(lines)
+
+    # construye y verifica la tabla correspondiente al codigo
+    table, errores = runCode(contTokens)
+
+    result = (lines, errores, table)
+    return result
+
+
+def runCode(contentTokens):
     # buscar asignaciones, el elemento '='
+    errores = []
     table_of_symbols = {}
+    errores = []
     for ln, line in enumerate(contentTokens, 1):
         for idx, token in enumerate(line):
 
@@ -31,9 +51,17 @@ def builderTable(contentTokens):
                 if '(' in line and ')' in line:
                     una_funcion = Function(line[idx + 1], token, ln)
                     table_of_symbols.update({una_funcion.name: una_funcion})
+                    break
 
-                # variable y asignacion
-                elif '=' in line:
+                # asignacion automatica
+                elif '=' in line and 'auto' in line:
+                    typ = typeOf(line[idx + 3])
+                    un_var = Var(typ, line[idx + 1], ln, line[idx + 3])
+                    table_of_symbols.update({un_var.name: un_var})
+                    break
+
+                # declaracion de variable y asignacion
+                elif '=' in line and isType(token):
                     un_var = Var(line[idx], line[idx + 1], ln, line[idx + 3])
                     table_of_symbols.update({un_var.name: un_var})
                     break
@@ -44,7 +72,21 @@ def builderTable(contentTokens):
                     table_of_symbols.update({un_var.name: un_var})
                     break
 
+            # se ecncotro una asignacion
+            else:
+                if updateVar(token, table_of_symbols):
+                    table_of_symbols.update({token: line[idx + 2]})
+                else:
+                    errores.append((ln, "Variable no Existe"))
+
     return table_of_symbols
+
+
+def updateVar(token, table_of_symbols):
+    if token in table_of_symbols:
+        return True
+    else:
+        return False
 
 
 def readTxt(text):
@@ -74,6 +116,11 @@ def tokenizer(lines):
             line = line.replace(";", " ; ")
             lines[idx] = line
 
+        if line.find("=") > -1:
+            # obtener el elemento y insertar dos " "(" " para separar el texto
+            line = line.replace(";", " ; ")
+            lines[idx] = line
+
     # tokenizar
     for line in lines:
         tokenContent.append(line.split())
@@ -88,20 +135,27 @@ def spliter(file_):
     return lines
 
 
-def initScan():
-    file_ = readTxt("test.txt")
-    lines = spliter(file_)
-    contTokens = tokenizer(lines)
-    return builderTable(contTokens)
-
-
-def checkCode(table_of_simbols):
-    pass
-    # En esta funcion busco los errores del codigo
-
-
 def isType(token):
-    return token == 'int' or token == 'string' or token == 'void' or token == 'float'
+    return token == 'int' or token == 'string' or token == 'void' or token == 'float' or token == 'auto'
+
+
+def typeOf(val):
+    try:
+        int(val)
+        return 'int'
+    except ValueError:
+        pass
+    try:
+        float(val)
+        return 'float'
+    except ValueError:
+        pass
+
+    if val[0] == '"' and val[len(val) - 1] == '"':
+        return 'string'
+
+    elif val == "true" or val == "false":
+        return "bool"
 
 
 table_of_simbols = initScan()
