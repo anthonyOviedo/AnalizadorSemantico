@@ -1,6 +1,7 @@
 # Antony Oviedo Alfaro
 # November 1,2019
 # test 2
+import os
 
 
 class Var:
@@ -23,7 +24,9 @@ def initScan(text=None):
     if text is not None:
         file_ = readTxt(text)
     else:
-        file_ = readTxt("test.txt")
+        text = "test.txt"
+        text = os.path.dirname(os.path.abspath(__file__)) + '\\' + text
+        file_ = readTxt(text)
     lines = spliter(file_)
 
     # tokeniza
@@ -160,3 +163,4 @@ def typeOf(val):
 
 
 Result = initScan()
+print(Result)
