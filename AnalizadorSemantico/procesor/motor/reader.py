@@ -1,6 +1,7 @@
 # Antony Oviedo Alfaro
 # November 1,2019
 # test 2
+import os
 
 
 class Var:
@@ -23,7 +24,9 @@ def initScan(text=None):
     if text is not None:
         file_ = readTxt(text)
     else:
-        file_ = readTxt("test.txt")
+        text = "test.txt"
+        text = os.path.dirname(os.path.abspath(__file__)) + '\\' + text
+        file_ = readTxt(text)
     lines = spliter(file_)
 
     # tokeniza
@@ -38,7 +41,6 @@ def initScan(text=None):
 
 def runCode(contentTokens):
     # buscar asignaciones, el elemento '='
-    errores = []
     table_of_symbols = {}
     errores = []
     for ln, line in enumerate(contentTokens, 1):
@@ -76,10 +78,12 @@ def runCode(contentTokens):
             else:
                 if updateVar(token, table_of_symbols):
                     table_of_symbols.update({token: line[idx + 2]})
+                    break
                 else:
                     errores.append((ln, "Variable no Existe"))
+                    break
 
-    return table_of_symbols
+    return (table_of_symbols, errores)
 
 
 def updateVar(token, table_of_symbols):
@@ -106,19 +110,19 @@ def tokenizer(lines):
             lines[idx] = line
 
         if line.find("{") > -1 or line.find("}") > -1:
-            # obtener el elemento y insertar dos " "(" " para separar el texto
+            # obtener el elemento y insertar dos " "{" " para separar el texto
             line = line.replace("{", " { ")
             line = line.replace("}", " } ")
             lines[idx] = line
 
         if line.find(";") > -1:
-            # obtener el elemento y insertar dos " "(" " para separar el texto
+            # obtener el elemento y insertar dos " "=" " para separar el texto
             line = line.replace(";", " ; ")
             lines[idx] = line
 
         if line.find("=") > -1:
             # obtener el elemento y insertar dos " "(" " para separar el texto
-            line = line.replace(";", " ; ")
+            line = line.replace("=", " = ")
             lines[idx] = line
 
     # tokenizar
@@ -158,5 +162,5 @@ def typeOf(val):
         return "bool"
 
 
-table_of_simbols = initScan()
-Result = checkCode(table_of_simbols)
+Result = initScan()
+print(Result)
