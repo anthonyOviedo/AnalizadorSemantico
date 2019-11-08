@@ -139,6 +139,7 @@ def runCode(contentTokens):
                     token, table_of_symbols, line[idx+2])
                 if is_in_table and same_type:
                     updateTable(table_of_symbols, token, line[idx + 2])
+                    break
                 else:
                     if is_in_table is False:
                         errores.append((ln, "Variable no Existe"))
