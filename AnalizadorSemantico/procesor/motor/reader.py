@@ -22,13 +22,15 @@ class Function:
 
 
 def initScan(text=None):
-    # guarda las lineas en un array lines
+    # abre el archivo
     if text is not None:
         file_ = readTxt(text)
     else:
         text = "test.txt"
         text = os.path.dirname(os.path.abspath(__file__)) + '\\' + text
         file_ = readTxt(text)
+
+    # guarda las lineas en un array lines
     lines = spliter(file_)
 
     # tokeniza
@@ -42,12 +44,12 @@ def initScan(text=None):
 
 
 def runCode(contentTokens):
-    table_of_symbols = {}
-
-    errores = []
-    temps_var = []
+    table_of_symbols = {}  # diccionario con las variables y las funciones
+    errores = []  # errores presentes en el codigo
+    temps_var = []  # variables para la funcion
     for ln, line in enumerate(contentTokens, 1):
         for idx, token in enumerate(line):
+            # colecta todas los argumentos
             try:
                 if gettingVarsFunc:
                     if ')' == token:
@@ -61,6 +63,7 @@ def runCode(contentTokens):
             except:
                 pass
 
+            # carga las variables de la funcion. para que se usen
             try:
                 if in_func:
                     if '{' == token:
@@ -72,27 +75,36 @@ def runCode(contentTokens):
                                 typeVar = tokArg
                             else:
                                 varName = tokArg
+                                errores.append
                                 un_var = Var(typeVar, varName, ln)
-                                tmp_var_arg.append(un_var)
+                                if typeVar != "":
+                                    tmp_var_arg.append(un_var)
+                                    typeVar = ""
                         una_funcion.arguments = tmp_var_arg
+                        continue
 
                     if '}' == token:
                         # borrar todas las variables locales de la
                         in_func = False
                         continue
+                    if 'return' == token:
+                        return_var = line[idx + 1]
+                        if typeOf(return_var) != una_funcion.retorn_val:
+                            errores.append(
+                                (ln, "El tipo de la variable con coincide con el tipo de retorno en la funcon"))
             except:
                 pass
 
             # se econtro una palabra reservada.
             if isReserveWord(token):
                 break
-            # recuperar las variables de la funcion.
+
             # inicia los argumentos
             if '(' == token:
                 gettingVarsFunc = True
                 continue
-            # inicia los argumentos
 
+            # declaraciones o funciones.
             elif isType(token):
 
                 # preguntar si tiene () para que sea una funcion.
@@ -119,18 +131,14 @@ def runCode(contentTokens):
                     un_var = Var(line[idx], line[idx + 1], ln)
                     table_of_symbols.update({un_var.name: un_var})
                     break
-                else:
-                    break
 
             # se ecncotro una asignacion
             elif '=' in line:
                 # revisa errores.
                 is_in_table, same_type = isUpgradeable(
                     token, table_of_symbols, line[idx+2])
-
                 if is_in_table and same_type:
                     updateTable(table_of_symbols, token, line[idx + 2])
-
                 else:
                     if is_in_table is False:
                         errores.append((ln, "Variable no Existe"))
