@@ -1,7 +1,6 @@
 # Antony Oviedo Alfaro
 # November 1,2019
 # test 2
-import os
 
 
 class Var:
@@ -20,13 +19,11 @@ class Function:
 
 
 def initScan(text=None):
-    # guarda las lineas en un array lines
+        # guarda las lineas en un array lines
     if text is not None:
         file_ = readTxt(text)
     else:
-        text = "test.txt"
-        text = os.path.dirname(os.path.abspath(__file__)) + '\\' + text
-        file_ = readTxt(text)
+        file_ = readTxt("test.txt")
     lines = spliter(file_)
 
     # tokeniza
@@ -40,17 +37,20 @@ def initScan(text=None):
 
 
 def runCode(contentTokens):
+    # buscar asignaciones, el elemento '='
+    errores = []
     table_of_symbols = {}
     errores = []
     for ln, line in enumerate(contentTokens, 1):
         for idx, token in enumerate(line):
 
-            # se econtro una palabra reservada.
             if isReserveWord(token):
+                # casos de if y whiles.
+                # hacer una funcion para obtener las varibles locales.
                 break
 
             # se econtro una declaracion.
-            elif isType(token):
+            if isType(token):
 
                 # preguntar si tiene () para que sea una funcion.
                 if '(' in line and ')' in line:
@@ -79,42 +79,19 @@ def runCode(contentTokens):
 
             # se ecncotro una asignacion
             else:
-                # actualizar el caso en el que lo que se asigna no corresponde a var
-                is_in_table, same_type = updateVar(
-                    token, table_of_symbols, line[idx+2])
-
-                if is_in_table and same_type:
-                    updateTable(table_of_symbols, token, line[idx + 2])
-
+                if updateVar(token, table_of_symbols):
+                    table_of_symbols.update({token: line[idx + 2]})
                 else:
-                    if is_in_table is False:
-                        errores.append((ln, "Variable no Existe"))
-                        break
-                    if same_type is False:
-                        errores.append(
-                            (ln, "Las variables no son del mismo tipo."))
-                        break
+                    errores.append((ln, "Variable no Existe"))
 
-    return (table_of_symbols, errores)
+    return table_of_symbols
 
 
-def updateTable(tabla, key, valor):
-    my_var = tabla[key]
-    my_var.val = valor
-    tabla[key] = my_var
-
-
-def updateVar(token, table_of_symbols, val1):
-    # se fija que la variable exista y el val1 sea el mismo tipo de la variabble
+def updateVar(token, table_of_symbols):
     if token in table_of_symbols:
-        is_in_table = True
-        same_type = typeOf(val1) == table_of_symbols[token].type
-
+        return True
     else:
-        is_in_table = False
-        same_type = True
-
-    return (is_in_table, same_type)
+        return False
 
 
 def readTxt(text):
@@ -134,19 +111,19 @@ def tokenizer(lines):
             lines[idx] = line
 
         if line.find("{") > -1 or line.find("}") > -1:
-            # obtener el elemento y insertar dos " "{" " para separar el texto
+            # obtener el elemento y insertar dos " "(" " para separar el texto
             line = line.replace("{", " { ")
             line = line.replace("}", " } ")
             lines[idx] = line
 
         if line.find(";") > -1:
-            # obtener el elemento y insertar dos " "=" " para separar el texto
+            # obtener el elemento y insertar dos " "(" " para separar el texto
             line = line.replace(";", " ; ")
             lines[idx] = line
 
         if line.find("=") > -1:
             # obtener el elemento y insertar dos " "(" " para separar el texto
-            line = line.replace("=", " = ")
+            line = line.replace(";", " ; ")
             lines[idx] = line
 
     # tokenizar
@@ -164,7 +141,7 @@ def spliter(file_):
 
 
 def isReserveWord(token):
-    return token == 'if' or token == 'while' or token == 'for'
+    pass
 
 
 def isType(token):
@@ -190,9 +167,5 @@ def typeOf(val):
         return "bool"
 
 
-def sameType(val1, val2):
-    return typeOf(val1) == typeOf(val2)
-
-
-Result = initScan()
-print(Result)
+table_of_simbols = initScan()
+Result = checkCode(table_of_simbols)
