@@ -1,5 +1,5 @@
 int a = 10 ;
-int foo(){};
+int foo(int p1 , string p2){};
 b = 10;
 a = 5 ;
 auto i = 10 ;

@@ -13,6 +13,8 @@ class Var:
 
 
 class Function:
+    arguments = []
+
     def __init__(self, name, retorn_val, line):
         self.name = name
         self.retorn_val = retorn_val
@@ -41,22 +43,63 @@ def initScan(text=None):
 
 def runCode(contentTokens):
     table_of_symbols = {}
+
     errores = []
+    temps_var = []
     for ln, line in enumerate(contentTokens, 1):
         for idx, token in enumerate(line):
+            try:
+                if gettingVarsFunc:
+                    if ')' == token:
+                        una_funcion.arguments = temps_var
+                        temps_var = []
+                        gettingVarsFunc = False
+                        continue
+
+                    temps_var.append(token)
+                    continue
+            except:
+                pass
+
+            try:
+                if in_func:
+                    if '{' == token:
+                        tmp_var_arg = []
+                        for tokArg in una_funcion.arguments:
+                            if tokArg == ',':
+                                continue
+                            elif isType(tokArg):
+                                typeVar = tokArg
+                            else:
+                                varName = tokArg
+                                un_var = Var(typeVar, varName, ln)
+                                tmp_var_arg.append(un_var)
+                        una_funcion.arguments = tmp_var_arg
+
+                    if '}' == token:
+                        # borrar todas las variables locales de la
+                        in_func = False
+                        continue
+            except:
+                pass
 
             # se econtro una palabra reservada.
             if isReserveWord(token):
                 break
+            # recuperar las variables de la funcion.
+            # inicia los argumentos
+            if '(' == token:
+                gettingVarsFunc = True
+                continue
+            # inicia los argumentos
 
-            # se econtro una declaracion.
             elif isType(token):
 
                 # preguntar si tiene () para que sea una funcion.
-                if '(' in line and ')' in line:
+                if '(' in line or ')' in line:
+                    in_func = True
                     una_funcion = Function(line[idx + 1], token, ln)
                     table_of_symbols.update({una_funcion.name: una_funcion})
-                    break
 
                 # asignacion automatica
                 elif '=' in line and 'auto' in line:
@@ -72,15 +115,17 @@ def runCode(contentTokens):
                     break
 
                 # declaracion solamante
-                else:
+                elif isType(line[idx]):
                     un_var = Var(line[idx], line[idx + 1], ln)
                     table_of_symbols.update({un_var.name: un_var})
                     break
+                else:
+                    break
 
             # se ecncotro una asignacion
-            else:
-                # actualizar el caso en el que lo que se asigna no corresponde a var
-                is_in_table, same_type = updateVar(
+            elif '=' in line:
+                # revisa errores.
+                is_in_table, same_type = isUpgradeable(
                     token, table_of_symbols, line[idx+2])
 
                 if is_in_table and same_type:
@@ -104,7 +149,7 @@ def updateTable(tabla, key, valor):
     tabla[key] = my_var
 
 
-def updateVar(token, table_of_symbols, val1):
+def isUpgradeable(token, table_of_symbols, val1):
     # se fija que la variable exista y el val1 sea el mismo tipo de la variabble
     if token in table_of_symbols:
         is_in_table = True
