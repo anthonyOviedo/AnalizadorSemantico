@@ -27,8 +27,15 @@ function run() {
 
 }
 
+function showErrors(errors) {
+    errors.map(x => $("#contentErrors").append("<div>" + "LINEA: " + x[0] + "| DESCRIPCION: " + x[1] + " </div>"));
+    $("#contentErrors").widht("100%")
+    $("#contentErrors").height("100%")
+
+}
+
 function showCode(lines) {
-    lines.map(x => $("#editorCode").append("<div>" + x + "</div>"))
+    lines.map((x, i = 0) => $("#editorCode").append(" <div> " + " <span class = 'ln'> " + i + " </span> " + x + " </div> "))
 }
 
 function showTable(table) {

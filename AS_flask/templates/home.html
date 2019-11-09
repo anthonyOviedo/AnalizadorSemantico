@@ -29,40 +29,32 @@
         <h1>ANALIZADOR SEMANTICO</h1>
     </div>
     <div class="container">
-        <center>
-            <div>
-                <div class="row">
-
-
-
-                </div>
-            </div>
-        </center>
         <div>
             <div class="row">
 
                 <div class="col">
+                    <center>
+                        <h1>Editor de Texto</h1>
+                    </center>
                     <div class="container">
-                        <center>
-                            <h1>Editor de Texto</h1>
-                        </center>
-                        <div><button onclick="run()" type="button" class="btn btn-success"><i class="fas fa-play"></i> Run</button>
-                        </div>
+
+
                         <div type="text" class="campo" id="editorCode" contenteditable="true">
 
+                        </div>
+                        <div><button onclick="run()" type="button" class="btn btn-success"><i class="fas fa-play"></i> Run</button>
                         </div>
                     </div>
                 </div>
 
 
                 <div class="col">
-                    <div class="container">
-                        <center>
-                            <h1>Tabla de Simbolos</h1>
-                        </center>
-
-                        <table class="table">
-                            <thead>
+                    <center>
+                        <h1>Tabla de Simbolos</h1>
+                    </center>
+                    <div class="container" style="border-radius: 7px 7px 7px 7px;">
+                        <table class="table table-striped" style="border-radius: 7px 7px 7px 7px;">
+                            <thead class="thead-dark">
                                 <tr>
                                     <th scope="col">Tipo</th>
                                     <th scope="col">Nombre</th>
@@ -77,12 +69,24 @@
                             </tbody>
                         </table>
                     </div>
-
                 </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <center>
+            <h1>Errores presentes en el Codigo</h1>
+        </center>
+        <div class="row">
+            <div class="col-12">
+                <dir id="contentErrors">
+
             </div>
 
+            </dir>
         </div>
-
     </div>
 </body>
 

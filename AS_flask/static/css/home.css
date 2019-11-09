@@ -3,7 +3,7 @@
 }
 
 h1 {
-    color: cadetblue;
+    color: #336699;
 }
 
 #titulo {
@@ -24,4 +24,24 @@ h1 {
     padding: 5px 5px 5px 5px;
     background-color: white;
     border-radius: 7px 7px 7px 7px;
+}
+
+#contentErrors {
+    background-color: #cc3300;
+    color: white;
+    border-radius: 7px 7px 7px 7px;
+}
+
+body {
+    background-color: #ecf2f9;
+    color: white;
+}
+
+.container {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.ln {
+    color: gainsboro;
 }
