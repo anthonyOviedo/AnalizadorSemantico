@@ -4,6 +4,7 @@ int foo(int p1 , string p2){
 };
 b = 10;
 a = 5 ;
+a = "gato";
 auto i = 10 ;
 auto s = "hola" ;
 auto b = true ;

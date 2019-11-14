@@ -20,13 +20,16 @@ class Function:
     arguments = []
 
     def description(self):
-        return "%s,%s,%s,%s" % (self.symbolType, self.name, self.retorn_val, self.line)
+        return "%s,%s,%s,%s,%s" % (self.symbolType, self.name, self.retorn_val, self.line, self. scope)
 
     def __init__(self, name, retorn_val, line):
         self.name = name
         self.retorn_val = retorn_val
         self.line = line
         self.symbolType = "Function"
+
+    def set_scope(self):
+        self.scope = "L.1: {} - L.2: {}".format(self.l1, self.l2)
 
 
 def initScan(text=None):
@@ -75,6 +78,8 @@ def runCode(contentTokens):
             try:
                 if in_func:
                     if '{' == token:
+                        una_funcion.l1 = ln
+                        # aqui se cargan todos los argumentos
                         tmp_var_arg = []
                         for tokArg in una_funcion.arguments:
                             if tokArg == ',':
@@ -94,7 +99,10 @@ def runCode(contentTokens):
                     if '}' == token:
                         # borrar todas las variables locales de la
                         in_func = False
+                        una_funcion.l2 = ln
+                        una_funcion.set_scope()
                         continue
+
                     if 'return' == token:
                         return_var = line[idx + 1]
                         if typeOf(return_var) != una_funcion.retorn_val:
