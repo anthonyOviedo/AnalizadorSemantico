@@ -1,0 +1,47 @@
+.container {
+    margin: 5% 5% 5% 5%;
+}
+
+h1 {
+    color: #336699;
+}
+
+#titulo {
+    text-align: center;
+}
+
+#editorCode {
+    color: black;
+    overflow: auto;
+    height: 350px;
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    border: 1px solid grey;
+    padding: 5px 5px 5px 5px;
+    background-color: white;
+    border-radius: 7px 7px 7px 7px;
+}
+
+#contentErrors {
+    background-color: #cc3300;
+    color: white;
+    border-radius: 7px 7px 7px 7px;
+}
+
+body {
+    background-color: #ecf2f9;
+    color: white;
+}
+
+.container {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.ln {
+    color: gainsboro;
+}
