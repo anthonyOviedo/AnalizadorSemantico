@@ -29,7 +29,7 @@ class Function:
         self.symbolType = "Function"
 
     def set_scope(self):
-        self.scope = "L.1: {} - L.2: {}".format(self.l1, self.l2)
+        self.scope = "L.1:{} - L.2: {}".format(self.l1, self.l2)
 
 
 def initScan(text=None):
