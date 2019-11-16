@@ -57,9 +57,37 @@ def initScan(text=None):
 def runCode(contentTokens):
     table_of_symbols = {}  # diccionario con las variables y las funciones
     errores = []  # errores presentes en el codigo
-    temps_var = []  # variables para la funcion
+    temps_var = []  # variables para la funcion5
+    llaves = []
+    parentecis = []
+    # fue necesario para que no tuviera errores
     for ln, line in enumerate(contentTokens, 1):
         for idx, token in enumerate(line):
+            if token == '{':
+                llaves.append(ln)
+            if token == '}':
+                llaves.pop()
+            if token == '(':
+                parentecis.append(ln)
+            if token == ')':
+                parentecis.pop()
+
+    while llaves != []:
+        errores.append((llaves[0], " llave sin cerrar."))
+        llaves.pop()
+
+    while parentecis != []:
+        errores.append((parentecis[0], " parentecis sin cerra sin cerrar."))
+        parentecis.pop()
+
+    if errores != []:
+        return ([], errores)
+
+    for ln, line in enumerate(contentTokens, 1):
+        for idx, token in enumerate(line):
+            if line == []:
+                break
+
             # colecta todas los argumentos
             try:
                 if gettingVarsFunc:
@@ -88,7 +116,6 @@ def runCode(contentTokens):
                                 typeVar = tokArg
                             else:
                                 varName = tokArg
-                                errores.append
                                 un_var = Var(typeVar, varName, ln)
                                 if typeVar != "":
                                     tmp_var_arg.append(un_var)
@@ -158,11 +185,11 @@ def runCode(contentTokens):
                     break
                 else:
                     if is_in_table is False:
-                        errores.append((ln, "Variable no Existe"))
+                        errores.append((ln, " Variable no esta declarada"))
                         break
                     if same_type is False:
                         errores.append(
-                            (ln, "Las variables no son del mismo tipo."))
+                            (ln, " Las variables no son del mismo tipo."))
                         break
 
     return (table_of_symbols, errores)
@@ -197,6 +224,8 @@ def tokenizer(lines):
     tokenContent = []
     # meter  " " para separar simbolos () {} ;
     for idx, line in enumerate(lines):
+        line = line.replace("//", " // ")
+        lines[idx] = line
         if line.find("(") > -1 or line.find(")") > -1:
             # obtener el elemento y insertar dos " "(" " para separar el texto
             line = line.replace("(", " ( ")
@@ -222,6 +251,10 @@ def tokenizer(lines):
     # tokenizar
     for line in lines:
         tokenContent.append(line.split())
+    for idx, line in enumerate(tokenContent):
+        if line[0] == "//":
+            tokenContent[idx] = []
+
     return tokenContent
 
 
@@ -272,5 +305,5 @@ def sameType(val1, val2):
     return typeOf(val1) == typeOf(val2)
 
 
-#Result = initScan()
-# print(Result)
+Result = initScan()
+print(Result)

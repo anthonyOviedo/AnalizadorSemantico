@@ -1,5 +1,6 @@
 $(document).ready(function() {
     console.log("ready!");
+    $("#editorCode").hide();
 });
 
 function sendFile() { Console.log("test") }
@@ -35,7 +36,10 @@ function showErrors(errors) {
 }
 
 function showCode(lines) {
-    lines.map((x, i = 0) => $("#editorCode").append(" <div> " + " <span class = 'ln'> " + i + " </span> " + x + " </div> "))
+    $("#editorCode").html("");
+    $("#editorCode").show('slow');
+
+    lines.map((x, i = 1) => $("#editorCode").append(" <div> " + " <span class = 'ln'> " + (i + 1) + " </span> " + x + " </div> "))
 }
 
 function showTable(table) {
@@ -52,8 +56,8 @@ function showTable(table) {
 }
 
 function appendNewRow(name, type, val, retorn_val, line, scope) {
-
     //es una variable
+
     if (retorn_val === null) {
         retorn_val = '-'
         scope = '-'
