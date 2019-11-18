@@ -305,5 +305,5 @@ def sameType(val1, val2):
     return typeOf(val1) == typeOf(val2)
 
 
-Result = initScan()
-print(Result)
+#Result = initScan()
+# print(Result)
